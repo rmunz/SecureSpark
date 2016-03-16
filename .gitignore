@@ -1,5 +1,1 @@
-spark-1.6.1-rc1/bin/*
-spark-1.6.1-rc1/sbin/*
-spark-1.6.1-rc1/build/*
-spark-1.6.1-rc1/make-distribution.sh
 **/*.class
