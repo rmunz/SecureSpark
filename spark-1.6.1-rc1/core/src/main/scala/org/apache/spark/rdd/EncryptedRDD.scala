@@ -16,16 +16,16 @@ class EncryptedRDD[T: ClassTag](prev: RDD[T]) extends RDD[T](prev) {
 	override protected def getPartitions: Array[Partition] = firstParent[T].partitions
 
 	override def saveAsTextFile(path: String): Unit = withScope {
-		val nullWritableClassTag = implicitly[ClassTag[NullWritable]]
-		val textClassTag = implicitly[ClassTag[Text]]
-		val r = this.mapPartitions { iter =>
-			val text = new Text()
-			iter.map { x =>
-				text.set(x.toString)
-				(NullWritable.get(), text)
-			}
-		}
-		RDD.rddToPairRDDFunctions(r)(nullWritableClassTag, textClassTag, null)
-			.saveAsHadoopFile[TextOutputFormat[NullWritable, Text]](path)
+    val nullWritableClassTag = implicitly[ClassTag[NullWritable]]
+    val textClassTag = implicitly[ClassTag[Text]]
+    val r = this.mapPartitions { iter =>
+      val text = new Text()
+      iter.map { x =>
+        text.set(Encryption.XOR(0x01.toByte, x.toString))
+        (NullWritable.get(), text)
+      }
+    }
+    RDD.rddToPairRDDFunctions(r)(nullWritableClassTag, textClassTag, null)
+      .saveAsHadoopFile[TextOutputFormat[NullWritable, Text]](path)
 	}
 }
