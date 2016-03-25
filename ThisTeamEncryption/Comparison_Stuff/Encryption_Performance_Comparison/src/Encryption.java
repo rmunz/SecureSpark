@@ -43,20 +43,27 @@ public class Encryption
 	private final int DES = 56; // Key size for DES encryption
 	private final int DESEDE= 168; // Key size for DESEDE encryption
 	private final int RC4 = 128; // Key size for RC4 encryption
+	private final int GB = 1073741824; // Number of Bytes in 1 GB
+	private static final String CWD = System.getProperty("user.dir");
 	
 	/**
 	 * @throws NoSuchPaddingException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidAlgorithmParameterException 
 	 * @throws InvalidKeyException 
+	 * @throws IOException 
 	 * 
 	 */
-	public Encryption(String src, String dst, String encryption, int bufferSize) 
-			throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException 
+	public Encryption(String src, String dst, int fileSize, String encryption, int bufferSize) 
+			throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IOException 
 	{
 		this.bufferSize = bufferSize;
 		this.buffer = new byte[this.bufferSize];
 		this.src = new File(src);
+		if (!this.src.exists()) 
+		{
+			this.src = genFile(src, fileSize);
+		}
 		this.dst = new File(dst);
 		String delims = "/";
 		String[] tokens = encryption.split(delims);
@@ -174,5 +181,25 @@ public class Encryption
 	    SecureRandom prng = new SecureRandom();
 	    prng.nextBytes(iv);
 	    return iv;
+	}
+	
+	private File genFile(String src, int size) throws IOException
+	{
+		int fSize = size * GB;
+		File moby = new File(CWD + "\\mobydick.txt");
+		byte[] mobyBuff = new byte[this.bufferSize];
+		FileInputStream mobyStream = new FileInputStream(moby);
+		mobyStream.read(mobyBuff);
+		mobyStream.close();
+		File genFile = new File(src);
+		FileOutputStream genStream = new FileOutputStream(genFile);
+		int bytes = 0;
+		while (bytes <= fSize)
+		{
+			genStream.write(mobyBuff, 0, this.bufferSize);
+			bytes += this.bufferSize;
+		}
+		genStream.close();
+		return genFile;
 	}
 }

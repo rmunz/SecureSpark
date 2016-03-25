@@ -25,27 +25,28 @@ import org.junit.Test;
  *
  */
 public class EncryptionTest {
-	private String mobyPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\mobydick.txt";
-	private String smallPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Small.txt";
-	private String mediumPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Medium.txt";
-	private String largePath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Large.txt";
+	private static final String CWD = System.getProperty("user.dir");
+	private String mobyPath = CWD + "\\mobydick.txt";
+	private String smallPath = CWD + "\\Small.txt";
+	private String mediumPath = CWD + "\\Medium.txt";
+	private String largePath = CWD + "\\Large.txt";
 	
-	private String mobyEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\mobydickenc.txt";
-	private String smallEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Smallenc.txt";
-	private String mediumEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Mediumenc.txt";
-	private String largeEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Largeenc.txt";
+	private String mobyEncPath = CWD + "\\mobydickenc.txt";
+	private String smallEncPath = CWD + "\\Smallenc.txt";
+	private String mediumEncPath = CWD + "\\Mediumenc.txt";
+	private String largeEncPath = CWD + "\\Largeenc.txt";
 	
 //	private String mobyPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\mobydick.txt";
-//	private String smallPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\mobydick.txt";
-//	private String mediumPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\mobydick.txt";
-//	private String largePath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\mobydick.txt";
+//	private String smallPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Small.txt";
+//	private String mediumPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Medium.txt";
+//	private String largePath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Large.txt";
 //	
 //	private String mobyEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\mobydickenc.txt";
-//	private String smallEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\mobydickenc.txt";
-//	private String mediumEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\mobydickenc.txt";
-//	private String largeEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\mobydickenc.txt";
+//	private String smallEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Smallenc.txt";
+//	private String mediumEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Mediumenc.txt";
+//	private String largeEncPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Largeenc.txt";
 	
-	private String dataPath = "C:\\Users\\RyanWork\\Documents\\School\\NS_Capstone\\Test_Files\\Data.csv";
+	private String dataPath = CWD + "\\Data.csv";
 	
 	private File moby = new File(mobyPath);
 	private File small = new File(smallPath);
@@ -61,6 +62,11 @@ public class EncryptionTest {
 	private long endTime;
 	private long duration;
 	
+	private final int MOBY = 0;
+	private final int SMALL = 1;
+	private final int MEDIUM = 5;
+	private final int LARGE = 10;
+	
 	private static final String NEW_LINE = "\n";
 	private static final String FILE_HEADER = "File Name (Size),"
 			+ "AES/CBC Encryption Time,"
@@ -75,10 +81,10 @@ public class EncryptionTest {
 			+ "DESede/ECB Decryption Time,"
 			+ "RC4 Encryption Time,"
 			+ "RC4 Decryption Time";
-	private static String mobyTime = "Moby Dick (0.0012 GB),";
-	private static String smallTime = "Small (1 GB),";
-	private static String mediumTime = "Medium (5 GB),";
-	private static String largeTime = "Large (10 GB),";
+	private static String[] mobyTime = new String[13];
+	private static String[] smallTime = new String[13];
+	private static String[] mediumTime = new String[13];
+	private static String[] largeTime = new String[13];
 	
 	private static int numTests = 0;
 	private static final int TOTAL_NUM_TESTS = 24;
@@ -98,13 +104,13 @@ public class EncryptionTest {
 	@Test
 	public void mobyAESCBCEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mobyPath, mobyEncPath, "AES/CBC/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(mobyPath, mobyEncPath, MOBY, "AES/CBC/PKCS5PADDING", 8192);
 		System.out.println("Moby AES/CBC Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[1] = duration + ",";
 		assertFalse(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby AES/CBC Encryption Complete");
 		System.out.println("Moby AES/CBC Decryption Started");
@@ -112,7 +118,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[2] = duration + ",";
 		assertTrue(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby AES/CBC Decryption Complete");
 		numTests += 1;
@@ -125,13 +131,13 @@ public class EncryptionTest {
 	@Test
 	public void smallAESCBCEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(smallPath, smallEncPath, "AES/CBC/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(smallPath, smallEncPath, SMALL, "AES/CBC/PKCS5PADDING", 8192);
 		System.out.println("Small AES/CBC Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[1] = duration + ",";
 		assertFalse(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small AES/CBC Encryption Complete");
 		System.out.println("Small AES/CBC Decryption Started");
@@ -139,7 +145,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[2] = duration + ",";
 		assertTrue(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small AES/CBC Decryption Complete");
 		numTests += 1;
@@ -147,18 +153,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(smallEnc.toPath());
+		Files.delete(small.toPath());
 	}
 	
 	@Test
 	public void mediumAESCBCEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mediumPath, mediumEncPath, "AES/CBC/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(mediumPath, mediumEncPath, MEDIUM, "AES/CBC/PKCS5PADDING", 8192);
 		System.out.println("Medium AES/CBC Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[1] = duration + ",";
 		assertFalse(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium AES/CBC Encryption Complete");
 		System.out.println("Medium AES/CBC Decryption Started");
@@ -166,7 +173,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[2] = duration + ",";
 		assertTrue(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium AES/CBC Decryption Complete");
 		numTests += 1;
@@ -174,18 +181,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(mediumEnc.toPath());
+		Files.delete(medium.toPath());
 	}
 	
 	@Test
 	public void largeAESCBCEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(largePath, largeEncPath, "AES/CBC/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(largePath, largeEncPath, LARGE, "AES/CBC/PKCS5PADDING", 8192);
 		System.out.println("Large AES/CBC Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[1] = duration + ",";
 		assertFalse(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large AES/CBC Encryption Completed");
 		System.out.println("Large AES/CBC Decryption Started");
@@ -193,7 +201,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[2] = duration + ",";
 		assertTrue(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large AES/CBC Decryption Completed");
 		numTests += 1;
@@ -201,6 +209,7 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(largeEnc.toPath());
+		Files.delete(large.toPath());
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -209,13 +218,13 @@ public class EncryptionTest {
 	@Test
 	public void mobyAESECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mobyPath, mobyEncPath, "AES/ECB/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(mobyPath, mobyEncPath, MOBY, "AES/ECB/PKCS5PADDING", 8192);
 		System.out.println("Moby AES/ECB Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[3] = duration + ",";
 		assertFalse(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby AES/ECB Encryption Complete");
 		System.out.println("Moby AES/ECB Decryption Started");
@@ -223,7 +232,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[4] = duration + ",";
 		assertTrue(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby AES/ECB Decryption Complete");
 		numTests += 1;
@@ -236,13 +245,13 @@ public class EncryptionTest {
 	@Test
 	public void smallAESECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(smallPath, smallEncPath, "AES/ECB/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(smallPath, smallEncPath, SMALL, "AES/ECB/PKCS5PADDING", 8192);
 		System.out.println("Small AES/ECB Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[3] = duration + ",";
 		assertFalse(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small AES/ECB Encryption Complete");
 		System.out.println("Small AES/ECB Decryption Started");
@@ -250,7 +259,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[4] = duration + ",";
 		assertTrue(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small AES/ECB Decryption Complete");
 		numTests += 1;
@@ -258,18 +267,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(smallEnc.toPath());
+		Files.delete(small.toPath());
 	}
 	
 	@Test
 	public void mediumAESECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mediumPath, mediumEncPath, "AES/ECB/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(mediumPath, mediumEncPath, MEDIUM, "AES/ECB/PKCS5PADDING", 8192);
 		System.out.println("Medium AES/ECB Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[3] = duration + ",";
 		assertFalse(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium AES/ECB Encryption Complete");
 		System.out.println("Medium AES/ECB Decryption Started");
@@ -277,7 +287,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[4] = duration + ",";
 		assertTrue(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium AES/ECB Decryption Complete");
 		numTests += 1;
@@ -285,18 +295,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(mediumEnc.toPath());
+		Files.delete(medium.toPath());
 	}
 	
 	@Test
 	public void largeAESECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(largePath, largeEncPath, "AES/ECB/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(largePath, largeEncPath, LARGE, "AES/ECB/PKCS5PADDING", 8192);
 		System.out.println("Large AES/ECB Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[3] = duration + ",";
 		assertFalse(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large AES/ECB Encryption Completed");
 		System.out.println("Large AES/ECB Decryption Started");
@@ -304,7 +315,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[4] = duration + ",";
 		assertTrue(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large AES/ECB Decryption Completed");
 		numTests += 1;
@@ -312,6 +323,7 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(largeEnc.toPath());
+		Files.delete(large.toPath());
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -320,13 +332,13 @@ public class EncryptionTest {
 	@Test
 	public void mobyDESCBCEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mobyPath, mobyEncPath, "DES/CBC/PKCS5Padding", 8192);
+		Encryption enc = new Encryption(mobyPath, mobyEncPath, MOBY, "DES/CBC/PKCS5Padding", 8192);
 		System.out.println("Moby DES/CBC Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[5] = duration + ",";
 		assertFalse(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby DES/CBC Encryption Complete");
 		System.out.println("Moby DES/CBC Decryption Started");
@@ -334,7 +346,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[6] = duration + ",";
 		assertTrue(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby DES/CBC Decryption Complete");
 		numTests += 1;
@@ -347,13 +359,13 @@ public class EncryptionTest {
 	@Test
 	public void smallDESCBCEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(smallPath, smallEncPath, "DES/CBC/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(smallPath, smallEncPath, SMALL, "DES/CBC/PKCS5PADDING", 8192);
 		System.out.println("Small DES/CBC Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[5] = duration + ",";
 		assertFalse(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small DES/CBC Encryption Complete");
 		System.out.println("Small DES/CBC Decryption Started");
@@ -361,7 +373,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[6] = duration + ",";
 		assertTrue(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small DES/CBC Decryption Complete");
 		numTests += 1;
@@ -369,18 +381,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(smallEnc.toPath());
+		Files.delete(small.toPath());
 	}
 	
 	@Test
 	public void mediumDESCBCEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mediumPath, mediumEncPath, "DES/CBC/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(mediumPath, mediumEncPath, MEDIUM, "DES/CBC/PKCS5PADDING", 8192);
 		System.out.println("Medium DES/CBC Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[5] = duration + ",";
 		assertFalse(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium DES/CBC Encryption Complete");
 		System.out.println("Medium DES/CBC Decryption Started");
@@ -388,7 +401,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[6] = duration + ",";
 		assertTrue(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium DES/CBC Decryption Complete");
 		numTests += 1;
@@ -396,18 +409,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(mediumEnc.toPath());
+		Files.delete(medium.toPath());
 	}
 	
 	@Test
 	public void largeDESCBCEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(largePath, largeEncPath, "DES/CBC/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(largePath, largeEncPath, LARGE, "DES/CBC/PKCS5PADDING", 8192);
 		System.out.println("Large DES/CBC Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[5] = duration + ",";
 		assertFalse(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large DES/CBC Encryption Completed");
 		System.out.println("Large DES/CBC Decryption Started");
@@ -415,7 +429,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[6] = duration + ",";
 		assertTrue(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large DES/CBC Decryption Completed");
 		numTests += 1;
@@ -423,6 +437,7 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(largeEnc.toPath());
+		Files.delete(large.toPath());
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -431,13 +446,13 @@ public class EncryptionTest {
 	@Test
 	public void mobyDESECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mobyPath, mobyEncPath, "DES/ECB/PKCS5Padding", 8192);
+		Encryption enc = new Encryption(mobyPath, mobyEncPath, MOBY, "DES/ECB/PKCS5Padding", 8192);
 		System.out.println("Moby DES/ECB Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[7] = duration + ",";
 		assertFalse(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby DES/ECB Encryption Complete");
 		System.out.println("Moby DES/ECB Decryption Started");
@@ -445,7 +460,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[8] = duration + ",";
 		assertTrue(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby DES/ECB Decryption Complete");
 		numTests += 1;
@@ -458,13 +473,13 @@ public class EncryptionTest {
 	@Test
 	public void smallDESECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(smallPath, smallEncPath, "DES/ECB/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(smallPath, smallEncPath, SMALL, "DES/ECB/PKCS5PADDING", 8192);
 		System.out.println("Small DES/ECB Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[7] = duration + ",";
 		assertFalse(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small DES/ECB Encryption Complete");
 		System.out.println("Small DES/ECB Decryption Started");
@@ -472,7 +487,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[8] = duration + ",";
 		assertTrue(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small DES/ECB Decryption Complete");
 		numTests += 1;
@@ -480,18 +495,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(smallEnc.toPath());
+		Files.delete(small.toPath());
 	}
 	
 	@Test
 	public void mediumDESECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mediumPath, mediumEncPath, "DES/ECB/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(mediumPath, mediumEncPath, MEDIUM, "DES/ECB/PKCS5PADDING", 8192);
 		System.out.println("Medium DES/ECB Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[7] = duration + ",";
 		assertFalse(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium DES/ECB Encryption Complete");
 		System.out.println("Medium DES/ECB Decryption Started");
@@ -499,7 +515,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[8] = duration + ",";
 		assertTrue(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium DES/ECB Decryption Complete");
 		numTests += 1;
@@ -507,18 +523,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(mediumEnc.toPath());
+		Files.delete(medium.toPath());
 	}
 	
 	@Test
 	public void largeDESECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(largePath, largeEncPath, "DES/ECB/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(largePath, largeEncPath, LARGE, "DES/ECB/PKCS5PADDING", 8192);
 		System.out.println("Large DES/CBC Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[7] = duration + ",";
 		assertFalse(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large DES/ECB Encryption Completed");
 		System.out.println("Large DES/ECB Decryption Started");
@@ -526,7 +543,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[8] = duration + ",";
 		assertTrue(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large DES/ECB Decryption Completed");
 		numTests += 1;
@@ -534,6 +551,7 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(largeEnc.toPath());
+		Files.delete(large.toPath());
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -542,13 +560,13 @@ public class EncryptionTest {
 	@Test
 	public void mobyDESedeECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mobyPath, mobyEncPath, "DESede/ECB/PKCS5Padding", 8192);
+		Encryption enc = new Encryption(mobyPath, mobyEncPath, MOBY, "DESede/ECB/PKCS5Padding", 8192);
 		System.out.println("Moby DESede/ECB Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[9] = duration + ",";
 		assertFalse(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby DESede/ECB Encryption Complete");
 		System.out.println("Moby DESede/ECB Decryption Started");
@@ -556,7 +574,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[10] = duration + ",";
 		assertTrue(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby DESede/ECB Decryption Complete");
 		numTests += 1;
@@ -569,13 +587,13 @@ public class EncryptionTest {
 	@Test
 	public void smallDESedeECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(smallPath, smallEncPath, "DESede/ECB/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(smallPath, smallEncPath, SMALL, "DESede/ECB/PKCS5PADDING", 8192);
 		System.out.println("Small DESede/ECB Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[9] = duration + ",";
 		assertFalse(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small DESede/ECB Encryption Complete");
 		System.out.println("Small DESede/ECB Decryption Started");
@@ -583,7 +601,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[10] = duration + ",";
 		assertTrue(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small DESede/ECB Decryption Complete");
 		numTests += 1;
@@ -591,18 +609,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(smallEnc.toPath());
+		Files.delete(small.toPath());
 	}
 	
 	@Test
 	public void mediumDESedeECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mediumPath, mediumEncPath, "DESede/ECB/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(mediumPath, mediumEncPath, MEDIUM, "DESede/ECB/PKCS5PADDING", 8192);
 		System.out.println("Medium DESede/ECB Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[9] = duration + ",";
 		assertFalse(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium DESede/ECB Encryption Complete");
 		System.out.println("Medium DESede/ECB Decryption Started");
@@ -610,7 +629,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[10] = duration + ",";
 		assertTrue(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium DESede/ECB Decryption Complete");
 		numTests += 1;
@@ -618,18 +637,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(mediumEnc.toPath());
+		Files.delete(medium.toPath());
 	}
 	
 	@Test
 	public void largeDESedeECBEncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(largePath, largeEncPath, "DESede/ECB/PKCS5PADDING", 8192);
+		Encryption enc = new Encryption(largePath, largeEncPath, LARGE, "DESede/ECB/PKCS5PADDING", 8192);
 		System.out.println("Large DESede/CBC Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[9] = duration + ",";
 		assertFalse(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large DESede/ECB Encryption Completed");
 		System.out.println("Large DESede/ECB Decryption Started");
@@ -637,7 +657,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[10] = duration + ",";
 		assertTrue(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large DESede/ECB Decryption Completed");
 		numTests += 1;
@@ -645,6 +665,7 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(largeEnc.toPath());
+		Files.delete(large.toPath());
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -653,13 +674,13 @@ public class EncryptionTest {
 	@Test
 	public void mobyRC4EncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mobyPath, mobyEncPath, "RC4", 8192);
+		Encryption enc = new Encryption(mobyPath, mobyEncPath, MOBY, "RC4", 8192);
 		System.out.println("Moby RC4 Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[11] = duration + ",";
 		assertFalse(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby RC4 Encryption Complete");
 		System.out.println("Moby RC4 Decryption Started");
@@ -667,7 +688,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mobyTime += duration + ",";
+		mobyTime[12] = duration + ",";
 		assertTrue(FileUtils.contentEquals(moby, mobyEnc));
 		System.out.println("Moby RC4 Decryption Complete");
 		numTests += 1;
@@ -680,13 +701,13 @@ public class EncryptionTest {
 	@Test
 	public void smallRC4EncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(smallPath, smallEncPath, "RC4", 8192);
+		Encryption enc = new Encryption(smallPath, smallEncPath, SMALL, "RC4", 8192);
 		System.out.println("Small RC4 Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[11] =duration + ",";
 		assertFalse(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small RC4 Encryption Complete");
 		System.out.println("Small RC4 Decryption Started");
@@ -694,7 +715,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		smallTime += duration + ",";
+		smallTime[12] = duration + ",";
 		assertTrue(FileUtils.contentEquals(small, smallEnc));
 		System.out.println("Small RC4 Decryption Complete");
 		numTests += 1;
@@ -702,18 +723,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(smallEnc.toPath());
+		Files.delete(small.toPath());
 	}
 	
 	@Test
 	public void mediumRC4EncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(mediumPath, mediumEncPath, "RC4", 8192);
+		Encryption enc = new Encryption(mediumPath, mediumEncPath, MEDIUM, "RC4", 8192);
 		System.out.println("Medium RC4 Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[11] = duration + ",";
 		assertFalse(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium RC4 Encryption Complete");
 		System.out.println("Medium RC4 Decryption Started");
@@ -721,7 +743,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		mediumTime += duration + ",";
+		mediumTime[12] = duration + ",";
 		assertTrue(FileUtils.contentEquals(medium, mediumEnc));
 		System.out.println("Medium RC4 Decryption Complete");
 		numTests += 1;
@@ -729,18 +751,19 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(mediumEnc.toPath());
+		Files.delete(medium.toPath());
 	}
 	
 	@Test
 	public void largeRC4EncryptionTest() throws IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException 
 	{
-		Encryption enc = new Encryption(largePath, largeEncPath, "RC4", 8192);
+		Encryption enc = new Encryption(largePath, largeEncPath, LARGE, "RC4", 8192);
 		System.out.println("Large RC4 Encryption Started");
 		startTime = System.nanoTime();
 		enc.encrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[11] = duration + ",";
 		assertFalse(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large RC4 Encryption Completed");
 		System.out.println("Large RC4 Decryption Started");
@@ -748,7 +771,7 @@ public class EncryptionTest {
 		enc.decrypt();
 		endTime = System.nanoTime();
 		duration = (endTime - startTime) / 1000000;  //milliseconds.
-		largeTime += duration + ",";
+		largeTime[12] = duration + ",";
 		assertTrue(FileUtils.contentEquals(large, largeEnc));
 		System.out.println("Large RC4 Decryption Completed");
 		numTests += 1;
@@ -756,6 +779,7 @@ public class EncryptionTest {
 			writeData();
 		}
 		Files.delete(largeEnc.toPath());
+		Files.delete(large.toPath());
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
@@ -764,16 +788,31 @@ public class EncryptionTest {
 	private void writeData() throws IOException
 	{
 		System.out.println("Writing Data...");
+		mobyTime[0] = "Moby Dick (0.0012 GB),";
+		smallTime[0] = "Small (1 GB),";
+		mediumTime[0] = "Medium (5 GB),";
+		largeTime[0] = "Large (10 GB),";
 		FileWriter writer = new FileWriter(dataPath);
+		String mobyT = mobyTime[0];
+		String smallT = smallTime[0];
+		String mediumT = mediumTime[0];
+		String largeT = largeTime[0];
+		for (int i = 1; i < 13; i++)
+		{
+			mobyT += mobyTime[i];
+			smallT += smallTime[i];
+			mediumT += mediumTime[i];
+			largeT += largeTime[i];
+		}
 		writer.append(FILE_HEADER);
 		writer.append(NEW_LINE);
-		writer.append(mobyTime);
+		writer.append(mobyT);
 		writer.append(NEW_LINE);
-		writer.append(smallTime);
+		writer.append(smallT);
 		writer.append(NEW_LINE);
-		writer.append(mediumTime);
+		writer.append(mediumT);
 		writer.append(NEW_LINE);
-		writer.append(largeTime);
+		writer.append(largeT);
 		writer.append(NEW_LINE);
 		writer.close();
 		System.out.println("Finished Writing Data...");
