@@ -15,13 +15,13 @@ class EncryptedRDD[T: ClassTag](prev: RDD[T]) extends RDD[T](prev) {
  
 	override protected def getPartitions: Array[Partition] = firstParent[T].partitions
 
-	override def saveAsTextFile(path: String): Unit = withScope {
+	def saveAsCypherFile(path: String): Unit = withScope {
     val nullWritableClassTag = implicitly[ClassTag[NullWritable]]
     val textClassTag = implicitly[ClassTag[Text]]
     val r = this.mapPartitions { iter =>
       val text = new Text()
       iter.map { x =>
-        text.set(Encryption.XOR(0x01.toByte, x.toString))
+        text.set(java.util.Base64.getEncoder().encodeToString(Encryption.XOR(0x8D.toByte, x.toString)))
         (NullWritable.get(), text)
       }
     }

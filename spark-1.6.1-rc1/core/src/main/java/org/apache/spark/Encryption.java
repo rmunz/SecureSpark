@@ -44,18 +44,28 @@ public class Encryption {
     return iv;
   }
 
-  public static String XOR(Byte key, String line) {
+  public static byte[] XOR(byte key, String line) {
     try {
-    byte[] clear = line.getBytes("UTF8");
-    byte[] clouded = new byte[clear.length];
-    int i = 0;
-    for(byte b : clear) {
-      clouded[i++] = (byte) (b ^ key.byteValue());
-    }
+      byte[] clear = line.getBytes("UTF8");
+      byte[] clouded = new byte[clear.length];
+      int i = 0;
+      for(byte b : clear) {
+        clouded[i++] = (byte) (b ^ key);
+      }
     
-    return new String(clouded, "UTF8");
+      return clouded;//java.util.Base64.getEncoder().encodeToString(clouded);
     } catch(java.io.UnsupportedEncodingException e) {
-	return "oh no";
+	    return "oh no";
     }
+  }
+
+  public static String XOR_bytesIn(byte key, byte[] clouded) {
+    byte[] clear = new byte[clouded.length];
+    int i = 0;
+    for(byte b : clouded) {
+      clear[i++] = (byte) (b ^ key);
+    }
+
+    return new String(clear);
   }
 }

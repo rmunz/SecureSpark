@@ -45,6 +45,7 @@ import org.apache.hadoop.mapreduce.lib.input.{FileInputFormat => NewFileInputFor
 
 import org.apache.mesos.MesosNativeLibrary
 
+import org.apache.spark._
 import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.deploy.{LocalSparkCluster, SparkHadoopUtil}
@@ -819,6 +820,18 @@ class SparkContext(config: SparkConf) extends Logging with ExecutorAllocationCli
     assertNotStopped()
     val indexToPrefs = seq.zipWithIndex.map(t => (t._2, t._1._2)).toMap
     new ParallelCollectionRDD[T](this, seq.map(_._1), seq.size, indexToPrefs)
+  }
+  
+  def cypherFile(
+    path: String,
+    minPartitions: Int = defaultMinPartitions): RDD[String] = withScope {
+    textFile(path, minPartitions).mapPartitions { iter =>
+      val text = new Text()
+      iter.map { x =>
+        var clear = Encryption.XOR_bytesIn(0x8D.toByte, java.util.Base64.getDecoder().decode(x.toString))
+        text.set(clear)
+      }
+    }
   }
 
   /**
