@@ -30,7 +30,7 @@ public class Encryption {
   }
 
   public byte[] encrypt(byte[] clear) throws IllegalBlockSizeException, BadPaddingException {
-    return encryptor.doFinal(clear);    
+    return encryptor.doFinal(clear);
   }
 
   public byte[] decrypt(byte[] cipher) throws IllegalBlockSizeException, BadPaddingException {
@@ -52,10 +52,10 @@ public class Encryption {
       for(byte b : clear) {
         clouded[i++] = (byte) (b ^ key);
       }
-    
+
       return clouded;//java.util.Base64.getEncoder().encodeToString(clouded);
     } catch(java.io.UnsupportedEncodingException e) {
-	    return "oh no";
+	    return null;
     }
   }
 

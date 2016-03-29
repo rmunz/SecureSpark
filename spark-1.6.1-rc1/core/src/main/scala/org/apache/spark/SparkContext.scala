@@ -821,17 +821,16 @@ class SparkContext(config: SparkConf) extends Logging with ExecutorAllocationCli
     val indexToPrefs = seq.zipWithIndex.map(t => (t._2, t._1._2)).toMap
     new ParallelCollectionRDD[T](this, seq.map(_._1), seq.size, indexToPrefs)
   }
-  
+
   def cypherFile(
     path: String,
     minPartitions: Int = defaultMinPartitions): RDD[String] = withScope {
-    textFile(path, minPartitions).mapPartitions { iter =>
-      val text = new Text()
-      iter.map { x =>
-        var clear = Encryption.XOR_bytesIn(0x8D.toByte, java.util.Base64.getDecoder().decode(x.toString))
-        text.set(clear)
+    var f = textFile(path, minPartitions).mapPartitions { iter =>
+      iter.map { line =>
+        Encryption.XOR_bytesIn(0x8D.toByte, java.util.Base64.getDecoder().decode(line.toString))
       }
     }
+    return f
   }
 
   /**
