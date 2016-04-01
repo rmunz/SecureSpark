@@ -822,7 +822,7 @@ class SparkContext(config: SparkConf) extends Logging with ExecutorAllocationCli
     new ParallelCollectionRDD[T](this, seq.map(_._1), seq.size, indexToPrefs)
   }
 
-  def cypherFile(
+  def cipherFile(
     path: String,
     minPartitions: Int = defaultMinPartitions): RDD[String] = withScope {
     var f = textFile(path, minPartitions).mapPartitions { iter =>
