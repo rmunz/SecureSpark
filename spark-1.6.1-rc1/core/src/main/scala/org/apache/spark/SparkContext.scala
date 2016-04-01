@@ -822,17 +822,6 @@ class SparkContext(config: SparkConf) extends Logging with ExecutorAllocationCli
     new ParallelCollectionRDD[T](this, seq.map(_._1), seq.size, indexToPrefs)
   }
 
-  def cipherFile(
-    path: String,
-    minPartitions: Int = defaultMinPartitions): RDD[String] = withScope {
-    var f = textFile(path, minPartitions).mapPartitions { iter =>
-      iter.map { line =>
-        Encryption.XOR_bytesIn(0x8D.toByte, java.util.Base64.getDecoder().decode(line.toString))
-      }
-    }
-    return f
-  }
-
   /**
    * Read a text file from HDFS, a local file system (available on all nodes), or any
    * Hadoop-supported file system URI, and return it as an RDD of Strings.
