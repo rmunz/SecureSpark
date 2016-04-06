@@ -1787,6 +1787,28 @@ abstract class RDD[T: ClassTag](
   def toJavaRDD() : JavaRDD[T] = {
     new JavaRDD(this)(elementClassTag)
   }
+
+  def encrypt(key: javax.crypto.SecretKey): RDD[String] = {
+        val r = this.mapPartitions { iter =>
+                iter.map { x =>
+                        val encryptor = new Encryption("AES/CBC/PKCS5PADDING", 8192, key)
+                        encryptor.encrypt(x.toString)
+                }
+        }
+	return r
+  }
+
+  def decrypt(key: javax.crypto.SecretKey): RDD[String] = {
+        val r = this.mapPartitions { iter =>
+                iter.map { x =>
+                        val decryptor = new Encryption("AES/CBC/PKCS5PADDING", 8192, key)
+                        decryptor.decrypt(x.toString)
+                }
+        }
+	return r
+  }
+
+
 }
 
 
@@ -1837,26 +1859,4 @@ object RDD {
     new DoubleRDDFunctions(rdd.map(x => num.toDouble(x)))
   }
 
-  def encrypt[T](key: javax.crypto.SecretKey): RDD[T] = {
-    	val r = this.mapPartitions { iter =>
-		val text = new Text()
-		iter.map { x =>
-        		Encryption encryptor = new Encryption("AES/CDC/PKCS5PADDING", 8192, key)	
-			text.set(encryptor.encrypt(x.toString))
-			(NullWritable.get(), text)
-		}
-	}
-
-  }
-
-  def decrypt[T](key: javax.crypto.SecretKey): RDD[T] = {
-	val r = this.mapPartitions { iter =>
-		val text = new Text()
-		iter.map { x =>
-        		Encryption decryptor = new Encryption("AES/CDC/PKCS5PADDING", 8192, key)
-			text.set(decryptor.decrypt(x.toString))
-			(NullWritable.get(), text)
-		}
-	}
-  }
 }

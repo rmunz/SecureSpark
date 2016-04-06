@@ -1,6 +1,11 @@
+package org.apache.spark;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
@@ -17,6 +22,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+
+import java.lang.IllegalArgumentException;
 
 /**
  * 
@@ -47,7 +54,11 @@ public class Encryption
 	private static final String CWD = System.getProperty("user.dir");
 	
 	public Encryption(String encryption, int bufferSize, SecretKey key)
-                        throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IOException {
+                        throws IllegalArgumentException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IOException {
+		if(key == null) {
+			throw new IllegalArgumentException("Key was null");
+		}
+		keySize = AES;
 		this.bufferSize = bufferSize;
 		this.buffer = new byte[this.bufferSize];
 		
@@ -57,24 +68,9 @@ public class Encryption
                 encryptor = Cipher.getInstance(encryption);
             	decryptor = Cipher.getInstance(encryption);
 
-                if (key != null)
-                {
-                    if (tokens.length > 1 && tokens[1].equals("CBC"))
-                    {
-                        iv = genIV();
-                        encryptor.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
-                        decryptor.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
-                    }
-                    else
-                    {
-                        encryptor.init(Cipher.ENCRYPT_MODE, key);
-                        decryptor.init(Cipher.DECRYPT_MODE, key);
-                    }
-               }
-               else
-               {
-                   System.out.println("Error, invalid key");
-               }
+                iv = genIV();
+                encryptor.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
+                decryptor.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
 	}
 
 	/**
@@ -172,7 +168,7 @@ public class Encryption
 			outEnc.write(buffer, 0, count);
 		}
 		inStream.close();
-		String output = java.util.Base64.getEncoder().encodeToString(outStream.toByteArray());
+		String output = java.util.Base64.getEncoder().encodeToString(((ByteArrayOutputStream) outStream).toByteArray());
 		outStream.close();
 		outEnc.close();
 		return output;
@@ -196,7 +192,7 @@ public class Encryption
 		}
 		inStream.close();
 		inEnc.close();
-		String output = outStream.toString("UTF-8");
+		String output = ((ByteArrayOutputStream) outStream).toString("UTF-8");
 		outStream.close();
 		return output;
 	}

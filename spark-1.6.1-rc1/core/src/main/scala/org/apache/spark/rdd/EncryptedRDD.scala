@@ -1,4 +1,4 @@
-package org.apache.spark.rdd
+/*package org.apache.spark.rdd
 
 import scala.reflect.{classTag, ClassTag}
 
@@ -28,4 +28,4 @@ class EncryptedRDD[T: ClassTag](prev: RDD[T]) extends RDD[T](prev) {
     RDD.rddToPairRDDFunctions(r)(nullWritableClassTag, textClassTag, null)
       .saveAsHadoopFile[TextOutputFormat[NullWritable, Text]](path)
 	}
-}
+}*/
