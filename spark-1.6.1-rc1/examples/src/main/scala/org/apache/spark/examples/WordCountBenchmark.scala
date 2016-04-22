@@ -72,7 +72,8 @@ object WordCountBenchmark {
 			val r = spark.textFile(text)
 			// Encrypt RDD
 			val encrypted = r.encrypt(key, iv)
-			encrypted.first()
+			val ran = scala.util.Random
+			encrypted.saveAsTextFile("Temp" + ran.nextInt() + ".txt")
 			encrypted.persist()
 			encryptEndTime = new java.util.Date()
 			decryptStartTime = new java.util.Date()
@@ -89,7 +90,8 @@ object WordCountBenchmark {
 			encryptStartTime = new java.util.Date()
 			// Create RDD from text file
 			val r = spark.textFile(text)
-			r.first()
+			val ran = scala.util.Random
+			r.saveAsTextFile("Temp" + ran.nextInt() + ".txt")
 			r.persist()
 			encryptEndTime = new java.util.Date()
 			decryptStartTime = new java.util.Date()
@@ -143,7 +145,8 @@ object WordCountBenchmark {
 				val r = spark.textFile(text)
 				// Encrypt RDD
 				val encrypted = r.encrypt(key, iv)
-				encrypted.first()
+				val ran = scala.util.Random
+				encrypted.saveAsTextFile("Temp" + ran.nextInt() + ".txt")
 				encrypted.persist()
 				encryptEndTime = new java.util.Date()
 				decryptStartTime = new java.util.Date()
@@ -160,7 +163,8 @@ object WordCountBenchmark {
 				encryptStartTime = new java.util.Date()
 				// Create RDD from text file
 				val r = spark.textFile(text)
-				r.first()
+				val ran = scala.util.Random
+				r.saveAsTextFile("Temp" + ran.nextInt() + ".txt")
 				r.persist()
 				encryptEndTime = new java.util.Date()
 				decryptStartTime = new java.util.Date()
