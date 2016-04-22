@@ -13,35 +13,40 @@ object WordCountBenchmark {
 	{
 		// Need to setup enviroment and then call tests here
 		val writer = new PrintWriter(new File("output.txt" ))
-		writer.write("===================================\n")
-		writer.write("1 MB File Test\n")
-		writer.write("===================================\n")
-		singleTest("mobydick.txt",writer,args(0).toBoolean)
+		if (args(1).toBoolean) 
+		{
+			writer.write("===================================\n")
+			writer.write("1 MB File Test\n")
+			writer.write("===================================\n")
+			singleTest("mobydick.txt",writer,args(0).toBoolean)
 
-		writer.write("===================================\n")
-		writer.write("500 MB File Test\n")
-		writer.write("===================================\n")
-		singleTest("fiveHundMB.txt",writer,args(0).toBoolean)
+			writer.write("===================================\n")
+			writer.write("500 MB File Test\n")
+			writer.write("===================================\n")
+			singleTest("fiveHundMB.txt",writer,args(0).toBoolean)
 
-		writer.write("===================================\n")
-		writer.write("2 GB File Test\n")
-		writer.write("===================================\n")
-		singleTest("twoGB.txt",writer,args(0).toBoolean)
+			writer.write("===================================\n")
+			writer.write("2 GB File Test\n")
+			writer.write("===================================\n")
+			singleTest("twoGB.txt",writer,args(0).toBoolean)
 
-		writer.write("===================================\n")
-		writer.write("5 GB File Test\n")
-		writer.write("===================================\n")
-		singleTest("fiveGB.txt",writer,args(0).toBoolean)
+			writer.write("===================================\n")
+			writer.write("100, 1 MB File Test\n")
+			writer.write("===================================\n")
+			multipleTest("mobydick.txt",writer,args(0).toBoolean, 100)
 
-		writer.write("===================================\n")
-		writer.write("100, 1 MB File Test\n")
-		writer.write("===================================\n")
-		multipleTest("mobydick.txt",writer,args(0).toBoolean, 100)
-
-		writer.write("===================================\n")
-		writer.write("500, 1 MB File Test\n")
-		writer.write("===================================\n")
-		multipleTest("mobydick.txt",writer,args(0).toBoolean, 500)
+			writer.write("===================================\n")
+			writer.write("500, 1 MB File Test\n")
+			writer.write("===================================\n")
+			multipleTest("mobydick.txt",writer,args(0).toBoolean, 500)
+		}
+		else
+		{
+			writer.write("===================================\n")
+			writer.write("5 GB File Test\n")
+			writer.write("===================================\n")
+			singleTest("fiveGB.txt",writer,args(0).toBoolean)
+		}
 
 		writer.close()
 		
