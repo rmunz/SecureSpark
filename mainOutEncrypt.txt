@@ -1,0 +1,45 @@
+===================================
+1 MB File Test
+===================================
+Test Start
+Word Count is: 17777
+Encryption Time is: 11448 ms
+Decryption Time is: 1046 ms
+Total Time is: 12494 ms
+Test Finish
+===================================
+500 MB File Test
+===================================
+Test Start
+Word Count is: 7995515
+Encryption Time is: 89121 ms
+Decryption Time is: 168083 ms
+Total Time is: 257204 ms
+Test Finish
+===================================
+2 GB File Test
+===================================
+Test Start
+Word Count is: 31981691
+Encryption Time is: 353523 ms
+Decryption Time is: 712439 ms
+Total Time is: 1065962 ms
+Test Finish
+===================================
+100, 1 MB File Test
+===================================
+Test Start
+Word Count is: 1777700
+Encryption Time is: 55553 ms
+Decryption Time is: 78929 ms
+Total Time is: 6906515 ms
+Test Finish
+===================================
+500, 1 MB File Test
+===================================
+Test Start
+Word Count is: 8888500
+Encryption Time is: 272617 ms
+Decryption Time is: 386017 ms
+Total Time is: 165516270 ms
+Test Finish
