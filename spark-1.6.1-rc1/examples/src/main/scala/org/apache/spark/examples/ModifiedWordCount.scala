@@ -78,15 +78,15 @@ object ModifiedWordCount {
 			// Create RDD from text file
 			val r = spark.textFile(text)
 			// Encrypt RDD
-			val encrypted = r.encrypt(key, iv)
-			encrypted.persist()
+			val e = r.encrypt(key, iv)
+			e.persist()
 			/////////////////Add runJob command here
-			spark.runJob(encrypted, (iter: Iterator[_]) => {})
+			spark.runJob(e, (iter: Iterator[_]) => {})
 
 			startTime = new java.util.Date()
 
 			decryptStartTime = new java.util.Date()
-			val decrypted = encrypted.decrypt(key, iv)
+			val decrypted = e.decrypt(key, iv)
 			/////////////////Add runJob command here.
 			spark.runJob(decrypted, (iter: Iterator[_]) => {})
 			decryptEndTime = new java.util.Date()
@@ -98,7 +98,7 @@ object ModifiedWordCount {
 			countEndTime = new java.util.Date()
 
 			encryptStartTime = new java.util.Date()
-			encrypted = decrypted.encrypt(key, iv)
+			val encrypted = decrypted.encrypt(key, iv)
 			/////////////////Add runJob command here.
 			spark.runJob(encrypted, (iter: Iterator[_]) => {})
 			encryptEndTime = new java.util.Date()
@@ -169,15 +169,15 @@ object ModifiedWordCount {
 				// Create RDD from text file
 				val r = spark.textFile(text)
 				// Encrypt RDD
-				val encrypted = r.encrypt(key, iv)
-				encrypted.persist()
+				val e = r.encrypt(key, iv)
+				e.persist()
 				/////////////////Add runJob command here
-				spark.runJob(encrypted, (iter: Iterator[_]) => {})
+				spark.runJob(e, (iter: Iterator[_]) => {})
 
 				startTime = new java.util.Date()
 
 				decryptStartTime = new java.util.Date()
-				val decrypted = encrypted.decrypt(key, iv)
+				val decrypted = e.decrypt(key, iv)
 				/////////////////Add runJob command here.
 				spark.runJob(decrypted, (iter: Iterator[_]) => {})
 				decryptEndTime = new java.util.Date()
@@ -189,7 +189,7 @@ object ModifiedWordCount {
 				countEndTime = new java.util.Date()
 
 				encryptStartTime = new java.util.Date()
-				encrypted = decrypted.encrypt(key, iv)
+				val encrypted = decrypted.encrypt(key, iv)
 				/////////////////Add runJob command here.
 				spark.runJob(encrypted, (iter: Iterator[_]) => {})
 				encryptEndTime = new java.util.Date()
@@ -222,7 +222,7 @@ object ModifiedWordCount {
 			}
 		}
 
-		output.write("Word Count is: " + count + "\n");
+		output.write("Word Count is: " + totalCount + "\n");
 		if (toEncrypt)
 		{
 			output.write("Encryption Time is: " + encryptTime + " ms\n")
